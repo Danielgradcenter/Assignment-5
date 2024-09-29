@@ -1,0 +1,67 @@
+---
+title: "assingment 5"
+output: html_document
+date: "2024-09-29"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+
+data <- read.csv("C:/Users/dbrusche/Desktop/wide_airport.csv", header = FALSE)
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+
+# Create the data frame
+data <- data.frame(
+  Airline = c("ALASKA", "ALASKA", "AM WEST", "AM WEST"),
+  Status = c("on time", "delayed", "on time", "delayed"),
+  Los_Angeles = c(497, 62, 694, 117),
+  Phoenix = c(221, 12, 4840, 415),
+  San_Diego = c(212, 20, 383, 65),
+  San_Francisco = c(503, 102, 320, 129),
+  Seattle = c(1841, 305, 201, 61)
+)
+#transformed into long data
+long_data <- data %>%
+  pivot_longer(cols = starts_with("Los"):Seattle,
+               names_to = "Destination",
+               values_to = "Delay")
+
+
+
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+#averaged delayed
+average_delays <- long_data %>%
+  group_by(Airline, Status) %>%
+  summarise(Average_Delay = mean(Delay), .groups = 'drop')
+
+# Visualize the data
+ggplot(average_delays, aes(x = Airline, y = Average_Delay, fill = Status)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Average Arrival Delays by Airline and Status",
+       x = "Airline",
+       y = "Average Delay (minutes)",
+       fill = "Status") +
+  theme_minimal()
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
